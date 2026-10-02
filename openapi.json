@@ -1,0 +1,204 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Whisper - High Scale Anonymous Messaging API",
+    "description": "Production-grade RESTful API for an anonymous messaging, threaded commentary, and polymorphic reaction platform. Designed with SOLID principles, clean DDD layer architecture, MySQL / SQLite engine, sliding-window rate limiting, and cryptographic ownership tokens.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Principal Systems Engineer",
+      "email": "engineer@whisper.io"
+    }
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Current Server"
+    }
+  ],
+  "paths": {
+    "/api/posts": {
+      "get": {
+        "summary": "List Whisper Posts (Feed)",
+        "description": "Fetch paginated whispers with sorting (recent, hot, popular, discussed), category filters, and search query. Automatically attaches viewer like & author ownership flags.",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer", "default": 15 } },
+          { "name": "sort", "in": "query", "schema": { "type": "string", "enum": ["recent", "hot", "popular", "discussed"], "default": "recent" } },
+          { "name": "category", "in": "query", "schema": { "type": "string" } },
+          { "name": "q", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated list of posts" }
+        }
+      },
+      "post": {
+        "summary": "Publish New Whisper Post",
+        "description": "Creates an anonymous whisper post with automatic pseudonym, color gradient, and cryptographic ownership token.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "content"],
+                "properties": {
+                  "title": { "type": "string", "example": "Secret refactoring story" },
+                  "content": { "type": "string", "example": "I refactored our legacy system over the weekend..." },
+                  "category": { "type": "string", "example": "tech" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Whisper post created" }
+        }
+      }
+    },
+    "/api/posts/{id}": {
+      "get": {
+        "summary": "Get Single Whisper Post with Nested Comments Tree",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Post details with full hierarchical comments tree" },
+          "404": { "description": "Post not found" }
+        }
+      },
+      "delete": {
+        "summary": "Delete Whisper Post",
+        "description": "Soft deletes a post. Requires either matching client anonymous fingerprint or the cryptographic X-Ownership-Token.",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } },
+          { "name": "X-Ownership-Token", "in": "header", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Post deleted" },
+          "403": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/posts/{postId}/comments": {
+      "post": {
+        "summary": "Add Root Comment to Post",
+        "parameters": [
+          { "name": "postId", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["content"],
+                "properties": {
+                  "content": { "type": "string", "example": "Brilliant architecture!" },
+                  "parent_id": { "type": "integer", "nullable": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Comment created" }
+        }
+      }
+    },
+    "/api/comments/{id}/replies": {
+      "post": {
+        "summary": "Reply Directly to a Comment (Nested / Threaded Reply)",
+        "description": "Creates a nested reply to comment {id}. Supports unlimited or capped tree depths.",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["content"],
+                "properties": {
+                  "content": { "type": "string", "example": "I totally agree with this point." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Nested reply created" }
+        }
+      }
+    },
+    "/api/comments/{id}": {
+      "delete": {
+        "summary": "Delete Comment or Reply",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } },
+          { "name": "X-Ownership-Token", "in": "header", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Comment deleted" }
+        }
+      }
+    },
+    "/api/likes/toggle": {
+      "post": {
+        "summary": "Polymorphic Toggle Like (Post or Comment)",
+        "description": "Idempotently toggles like state for a target. Atomically increments or decrements counters.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["target_type", "target_id"],
+                "properties": {
+                  "target_type": { "type": "string", "enum": ["post", "comment"] },
+                  "target_id": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Toggled like status" }
+        }
+      }
+    },
+    "/api/identity/me": {
+      "get": {
+        "summary": "Get Current Anonymous Identity",
+        "description": "Returns current anonymous pseudonym, avatar gradient, and session tokens.",
+        "responses": {
+          "200": { "description": "Anonymous identity resolved" }
+        }
+      }
+    },
+    "/api/identity/refresh": {
+      "post": {
+        "summary": "Generate New Anonymous Identity / Pseudonym",
+        "responses": {
+          "200": { "description": "New identity generated" }
+        }
+      }
+    },
+    "/api/stats": {
+      "get": {
+        "summary": "System Analytics & Health Telemetry",
+        "responses": {
+          "200": { "description": "Platform statistics and database engine telemetry" }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Health Check Endpoint",
+        "responses": {
+          "200": { "description": "OK" }
+        }
+      }
+    }
+  }
+}
