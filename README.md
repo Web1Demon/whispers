@@ -5,9 +5,9 @@
 
 ##  Executive Summary
 
-**Whisper** is a production-grade anonymous messaging and threaded discussion platform engineered specifically to showcase Senior / Principal Backend Engineering and System Architecture capabilities.
+**Whisper** is a production-grade anonymous messaging and threaded discussion platform.
 
-Built with **modern PHP 8.5** and **MySQL 8.0 (InnoDB)**, Whisper avoids heavy third-party framework bloat while providing a strict **Domain-Driven Design (DDD)** and **Clean / Hexagonal Architecture** with zero dependencies.
+Built with **modern PHP 8.5** and **MySQL 8.0 (InnoDB)**, Whisper avoids heavy third-party framework while providing a strict **Domain-Driven Design (DDD)** and **Clean / Hexagonal Architecture** with zero dependencies.
 
 ---
 
