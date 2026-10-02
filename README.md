@@ -1,5 +1,4 @@
 # Whisper — Anonymous Messaging & Discussion Platform
-### High-Performance PHP 8.5 Backend Architecture with MySQL 8.0 & DDD Principles
 
 ---
 
