@@ -3,7 +3,7 @@
 
 ---
 
-## 🌟 Executive Summary
+##  Executive Summary
 
 **Whisper** is a production-grade anonymous messaging and threaded discussion platform engineered specifically to showcase Senior / Principal Backend Engineering and System Architecture capabilities.
 
@@ -11,7 +11,7 @@ Built with **modern PHP 8.5** and **MySQL 8.0 (InnoDB)**, Whisper avoids heavy t
 
 ---
 
-## 🚀 Key Architectural Highlights
+##  Key Architectural Highlights
 
 ### 1. Hierarchical Nested Comments ($O(N)$ Zero $N+1$ Queries)
 - Supports arbitrary depth commentary (**Post → Comment → Reply → Sub-Reply...**).
@@ -38,7 +38,7 @@ Built with **modern PHP 8.5** and **MySQL 8.0 (InnoDB)**, Whisper avoids heavy t
 
 ---
 
-## 🏗️ Architecture & Directory Structure
+##  Architecture & Directory Structure
 
 ```
 whisper/
@@ -85,7 +85,7 @@ whisper/
 
 ---
 
-## 📡 RESTful API Endpoints
+##  RESTful API Endpoints
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
@@ -105,7 +105,7 @@ whisper/
 
 ---
 
-## 🧪 Running Tests
+##  Running Tests
 
 Whisper comes with a comprehensive automated test suite verifying all layers against the live database:
 
@@ -170,7 +170,7 @@ Sample output:
 
 ---
 
-## 💻 Local Development & Server Launch
+##  Local Development & Server Launch
 
 1. Start the PHP built-in server:
    ```bash
